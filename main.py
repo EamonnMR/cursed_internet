@@ -31,6 +31,38 @@ def logger(logfile="log.txt"):
     finally:
         output.flush()
 
+class VerticalMenu:
+    def __init__(self, ui, options, log):
+        self.ui = ui
+        self.options = options
+        self.selection = 0
+        self.log = log
+
+    def main(self):
+        self.ui.display_list(self.options)
+        self.log.write("entered menu")
+        while True:
+            input = self.ui.screen.getch()
+            if input == curses.KEY_DOWN:
+                self.sel_down()
+            if input == curses.KEY_UP:
+                self.sel_up()
+            if input in (ord('q'), curses.KEY_EXIT):
+                break
+            if input == curses.KEY_ENTER:
+                self.log.write("selection picked: {}\n".format(self.options[self.selection]))
+                break 
+                # TODO: hang data off to determine what to do here
+
+    def sel_up(self):
+        self.selection = (self.selection + 1) % len(self.options)
+        self.update_sel()
+    def sel_down(self):
+        self.selection = (self.selection - 1) % len(self.options)
+        self.update_sel()
+    def update_sel(self):
+        self.log.write("Selected: {}\n".format(self.options[self.selection]))
+
 
 class UserInterface:
     def __init__(self):
@@ -61,9 +93,10 @@ if __name__ == "__main__":
         ui = UserInterface()
         ui.screen.addstr(SPLASH)
         ui.screen.refresh()
-        posts = stories_for_sub('linux') 
         ui.screen.getch()
         ui.screen.erase()
         ui.screen.move(0,0)
-        ui.display_list(posts)
+        posts = stories_for_sub('linux') 
+        menu = VerticalMenu(ui, posts, logfile)
+        menu.main()
         ui.screen.getch()
