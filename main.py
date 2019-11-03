@@ -27,7 +27,7 @@ def logger(logfile="log.txt"):
     try:
         yield output
     except Exception as e:
-        output.write("Exception encountered: {}".format(type(e).__name__))
+        output.write("\nException encountered: {}".format(type(e).__name__))
         output.write(traceback.format_exc())
     finally:
         output.flush()
@@ -41,7 +41,7 @@ class VerticalMenu:
 
     def main(self):
         self.ui.display_list(self.options)
-        self.log.write("entered menu")
+        self.log.write("entered menu\n")
         while True:
             input = self.ui.screen.getch()
             if input == curses.KEY_DOWN:
